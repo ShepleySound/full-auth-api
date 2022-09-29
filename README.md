@@ -1,10 +1,12 @@
-# Server - Bearer Auth
+# Full Express Server Implementation
+
+An Express API server with basic username/password authentication, bearer authentication, and role-based access control.
 
 Author: Robert Shepley
 <!-- Replace URL's and add more necessary links -->
-- [Tests Report](https://github.com/ShepleySound/bearer-auth-server/actions)
-- [Assignment Pull Request](https://github.com/ShepleySound/bearer-auth-server/pull/1)
-- [Heroku Prod Deployment](https://shepley-bearer-auth.herokuapp.com/)
+- [Tests Report]()
+- [Assignment Pull Request]()
+- [Heroku Prod Deployment]()
 
 ## Setup
 
@@ -40,7 +42,80 @@ Author: Robert Shepley
 
 ## API
 
-### /signup
+<details><summary>/auth/signup</summary>
+
+#### POST
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | OK |
+| 401 | Unauthorized |
+</details>
+
+<details><summary>/auth/signin</summary>
+
+#### POST
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security
+| --- |
+| BasicAuth |
+</details>
+
+<details><summary>/auth/users</summary>
+
+#### GET
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | DELETE |
+</details>
+
+<details><summary>/auth/secret</summary>
+
+#### GET
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security
+| --- |
+| BearerAuth |
+</details>
+
+<details><summary>/api/v2/books</summary>
+
+#### GET
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security
+| --- |
+| BearerAuth |
 
 #### POST
 
@@ -51,9 +126,27 @@ Author: Robert Shepley
 | 201 | OK |
 | 401 | Unauthorized |
 
-### /signin
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | CREATE |
+</details>
+
+<details><summary>/api/v2/books/:id</summary>
 
 #### POST
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | CREATE |
+
+#### GET
 
 ##### Responses
 
@@ -62,13 +155,38 @@ Author: Robert Shepley
 | 200 | OK |
 | 401 | Unauthorized |
 
-##### Security
-
-| Security Schema
+| Security
 | --- |
-| BasicAuth |
+| BearerAuth |
 
-### /users
+#### PUT/PATCH
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | UPDATE |
+
+#### DELETE
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | DELETE |
+</details>
+
+<details><summary>/api/v2/food</summary>
 
 #### GET
 
@@ -77,15 +195,40 @@ Author: Robert Shepley
 | Code | Description |
 | ---- | ----------- |
 | 200 | OK |
-| 403 | Unauthorized |
+| 401 | Unauthorized |
 
-##### Security
-
-| Security Schema
+| Security
 | --- |
 | BearerAuth |
 
-### /secret
+#### POST
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | CREATE |
+</details>
+
+<details><summary>/api/v2/food/:id</summary>
+
+#### POST
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | CREATE |
 
 #### GET
 
@@ -94,20 +237,45 @@ Author: Robert Shepley
 | Code | Description |
 | ---- | ----------- |
 | 200 | OK |
-| 403 | Unauthorized |
+| 401 | Unauthorized |
 
-##### Security
-
-| Security Schema
+| Security
 | --- |
 | BearerAuth |
+
+#### PUT/PATCH
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | UPDATE |
+
+#### DELETE
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 401 | Unauthorized |
+
+| Security | Required Permission |
+| --- | --- |
+| BearerAuth / RBAC | DELETE |
+</details>
 
 ## Tests
 
 - Unit Tests: `npm run test`
 
-## Structure Diagram
+<!-- ## Structure Diagram
 
 (Created with [app.diagrams.net](https://app.diagrams.net/))
 
-![Diagram](./bearer-auth-uml.png)
+![Diagram]() -->
