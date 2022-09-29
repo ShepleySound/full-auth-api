@@ -42,32 +42,56 @@ describe('Test API Server', () => {
 });
 
 describe('Test authentication', () => {
+  const testUsername = 'testAdmin';
+  const testPassword = 'adminpasswordSuperSecret!';
+  const testRole = 'admin';
+
   test('Admin signup', async () => {
     const signUpResponse = await request.post('/auth/signup').send({
-      username: 'testAdmin',
-      password: 'adminpasswordsupersecret',
-      role: 'admin',
+      username: testUsername,
+      password: testPassword,
+      role: testRole,
     });
     const { username, role, capabilities, token } = signUpResponse.body;
-    expect(username).toEqual('testAdmin');
-    expect(role).toEqual('admin');
+
+    expect(username).toEqual(testUsername);
+    expect(role).toEqual(testRole);
+    expect(capabilities).toContain('create', 'read', 'update', 'delete');
+    expect(token).toBeTruthy();
+  });
+  
+  test('Admin signin', async () => {
+    const encodedAuth = Buffer.from(`${testUsername}:${testPassword}`).toString('base64');
+    
+    const signInResponse = await request
+      .post('/auth/signin')
+      .set('Authorization', 'basic ' + encodedAuth);
+
+    const { username, role, capabilities, token } = signInResponse.body;
+    
+    expect(username).toEqual(testUsername);
+    expect(role).toEqual(testRole);
     expect(capabilities).toContain('create', 'read', 'update', 'delete');
     expect(token).toBeTruthy();
   });
 });
-
-test('User signup', async () => {
-  const signUpResponse = await request.post('/auth/signup').send({
-    username: 'testUser',
-    password: 'thisisapassword',
-    role: 'user',
+  
+describe('Test user authentication', () => {
+  test('User signup', async () => {
+    const signUpResponse = await request.post('/auth/signup').send({
+      username: 'testUser',
+      password: 'thisisapassword',
+      role: 'user',
+    });
+    const { username, role, capabilities, token } = signUpResponse.body;
+    expect(username).toEqual('testUser');
+    expect(role).toEqual('user');
+    expect(capabilities).toContain('read');
+    expect(token).toBeTruthy();
   });
-  const { username, role, capabilities, token } = signUpResponse.body;
-  expect(username).toEqual('testUser');
-  expect(role).toEqual('user');
-  expect(capabilities).toContain('read');
-  expect(token).toBeTruthy();
-});
+
+})
+
 
 describe('Test /books endpoint methods', () => {
   test('Handle getting all books', async () => {
