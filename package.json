@@ -1,6 +1,9 @@
 {
   "name": "full-auth-server",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "description": "API Server with bearer auth and role-based access control.",
   "main": "index.js",
   "scripts": {
