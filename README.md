@@ -4,9 +4,9 @@ An Express API server with basic username/password authentication, bearer authen
 
 Author: Robert Shepley
 <!-- Replace URL's and add more necessary links -->
-- [Tests Report]()
-- [Assignment Pull Request]()
-- [Heroku Prod Deployment]()
+- [Tests Report](https://github.com/ShepleySound/full-auth-api/actions)
+- [Assignment Pull Request](https://github.com/ShepleySound/full-auth-api/pull/1)
+- [Heroku Prod Deployment](https://shepley-full-auth-api.herokuapp.com/)
 
 ## Setup
 
