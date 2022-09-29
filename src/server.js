@@ -9,7 +9,8 @@ const notFound = require('./error-handlers/404');
 const errorHandler = require('./error-handlers/500');
 const logger = require('./middleware/logger.js');
 const authRouter = require('./auth/routes');
-const dataRouter = require('./routes/v1');
+const v1Router = require('./routes/v1');
+const v2Router = require('./routes/v2');
 
 // Require routes here?
 console.log('MAKE SURE YOU REQUIRE YOUR ROUTES');
@@ -25,7 +26,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/auth/', authRouter);
-app.use('/api/v1', dataRouter);
+app.use('/api/v1', v1Router);
+app.use('/api/v2', v2Router);
+
 
 // Catch-all route (404)
 app.use('*', notFound);
