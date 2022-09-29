@@ -131,7 +131,7 @@ describe('Test user authentication', () => {
 });
 
 
-describe('Test /books endpoint methods with valid authorization', () => {
+describe('Test /books endpoint methods with valid authentication', () => {
   const testUsername = 'testAdmin';
   const testPassword = 'adminpasswordSuperSecret!';
   
@@ -200,7 +200,7 @@ describe('Test /books endpoint methods with valid authorization', () => {
   });
 });
 
-describe('Test /books endpoint methods with invalid authorization', () => {
+describe('Test /books endpoint methods with invalid authentication', () => {
   test('Handle getting all books', async () => {
     const response = await request
       .get('/api/v2/books')
