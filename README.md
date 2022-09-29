@@ -1,10 +1,10 @@
-# Server - Bearer Auth
+# Full Express Server Implementation
 
 Author: Robert Shepley
 <!-- Replace URL's and add more necessary links -->
-- [Tests Report](https://github.com/ShepleySound/bearer-auth-server/actions)
-- [Assignment Pull Request](https://github.com/ShepleySound/bearer-auth-server/pull/1)
-- [Heroku Prod Deployment](https://shepley-bearer-auth.herokuapp.com/)
+- [Tests Report]()
+- [Assignment Pull Request]()
+- [Heroku Prod Deployment]()
 
 ## Setup
 
@@ -106,8 +106,8 @@ Author: Robert Shepley
 
 - Unit Tests: `npm run test`
 
-## Structure Diagram
+<!-- ## Structure Diagram
 
 (Created with [app.diagrams.net](https://app.diagrams.net/))
 
-![Diagram](./bearer-auth-uml.png)
+![Diagram]() -->
