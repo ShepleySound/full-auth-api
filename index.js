@@ -1,7 +1,7 @@
 'use strict';
 
 require('dotenv').config();
-const { app } = require('./server');
+const { app } = require('./src/server');
 const { db } = require('./src/models');
 const PORT = process.env.PORT || 3002;
 
