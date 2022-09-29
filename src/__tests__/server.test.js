@@ -41,18 +41,18 @@ describe('Test API Server', () => {
 
 });
 
-describe('Test authentication', () => {
+describe('Test admin authentication', () => {
   const testUsername = 'testAdmin';
   const testPassword = 'adminpasswordSuperSecret!';
   const testRole = 'admin';
 
   test('Admin signup', async () => {
-    const signUpResponse = await request.post('/auth/signup').send({
+    const response = await request.post('/auth/signup').send({
       username: testUsername,
       password: testPassword,
       role: testRole,
     });
-    const { username, role, capabilities, token } = signUpResponse.body;
+    const { username, role, capabilities, token } = response.body;
 
     expect(username).toEqual(testUsername);
     expect(role).toEqual(testRole);
@@ -60,7 +60,61 @@ describe('Test authentication', () => {
     expect(token).toBeTruthy();
   });
   
-  test('Admin signin', async () => {
+  test('Valid admin signin', async () => {
+    const encodedAuth = Buffer.from(`${testUsername}:${testPassword}`).toString('base64');
+    
+    const response = await request
+      .post('/auth/signin')
+      .set('Authorization', 'basic ' + encodedAuth);
+
+    const { username, role, capabilities, token } = response.body;
+    
+    expect(username).toEqual(testUsername);
+    expect(role).toEqual(testRole);
+    expect(capabilities).toContain('create', 'read', 'update', 'delete');
+    expect(token).toBeTruthy();
+  });
+
+  test('Generic auth error when password is incorrect', async () => {
+    const encodedAuth = Buffer.from(`${testUsername}:incorrectpassword!`).toString('base64');
+    const response = await request
+      .post('/auth/signin')
+      .set('Authorization', 'basic ' + encodedAuth);
+
+    expect(response.status).toEqual(401);
+  });
+
+  test('Generic auth error when username does not exist', async () => {
+    const encodedAuth = Buffer.from(`Definitelynotarealusername:dontevenbotherwithapassword!`).toString('base64');
+    const response = await request
+      .post('/auth/signin')
+      .set('Authorization', 'basic ' + encodedAuth);
+
+    expect(response.status).toEqual(401);
+  });
+});
+  
+describe('Test user authentication', () => {
+  const testUsername = 'testUser';
+  const testPassword = 'thisisapassworditprobablyisnotverygood';
+  const testRole = 'user';
+
+  test('User signup', async () => {
+    const response = await request.post('/auth/signup').send({
+      username: testUsername,
+      password: testPassword,
+      role: testRole,
+    });
+
+    const { username, role, capabilities, token } = response.body;
+
+    expect(username).toEqual(testUsername);
+    expect(role).toEqual(testRole);
+    expect(capabilities).toContain('read');
+    expect(token).toBeTruthy();
+  });
+
+  test('Valid user signin', async () => {
     const encodedAuth = Buffer.from(`${testUsername}:${testPassword}`).toString('base64');
     
     const signInResponse = await request
@@ -68,43 +122,46 @@ describe('Test authentication', () => {
       .set('Authorization', 'basic ' + encodedAuth);
 
     const { username, role, capabilities, token } = signInResponse.body;
-    
+
     expect(username).toEqual(testUsername);
     expect(role).toEqual(testRole);
-    expect(capabilities).toContain('create', 'read', 'update', 'delete');
-    expect(token).toBeTruthy();
-  });
-});
-  
-describe('Test user authentication', () => {
-  test('User signup', async () => {
-    const signUpResponse = await request.post('/auth/signup').send({
-      username: 'testUser',
-      password: 'thisisapassword',
-      role: 'user',
-    });
-    const { username, role, capabilities, token } = signUpResponse.body;
-    expect(username).toEqual('testUser');
-    expect(role).toEqual('user');
     expect(capabilities).toContain('read');
     expect(token).toBeTruthy();
   });
+});
 
-})
 
+describe('Test /books endpoint methods with valid authorization', () => {
+  const testUsername = 'testAdmin';
+  const testPassword = 'adminpasswordSuperSecret!';
+  
+  let token = '';
+  beforeAll(async () => {
+    const encodedAuth = Buffer.from(`${testUsername}:${testPassword}`).toString('base64');
+    
+    const response = await request
+      .post('/auth/signin')
+      .set('Authorization', 'basic ' + encodedAuth);
+      
+    token = response.body.token;
+  });
 
-describe('Test /books endpoint methods', () => {
   test('Handle getting all books', async () => {
-    const response = await request.get('/api/v1/books');
+    const response = await request
+      .get('/api/v2/books')
+      .set('Authorization', 'bearer ' + token);
     expect(response.status).toEqual(200);
   });
 
   test('Create a book', async () => {
-    let response = await request.post('/api/v1/books').send({
-      title: 'Test Book',
-      author: 'Test Author',
-      pages: 100,
-    });
+    let response = await request
+      .post('/api/v2/books')
+      .set('Authorization', 'bearer ' + token)
+      .send({
+        title: 'Test Book',
+        author: 'Test Author',
+        pages: 100,
+      });
     expect(response.status).toEqual(201);
     expect(response.body.title).toEqual('Test Book');
     expect(response.body.author).toEqual('Test Author');
@@ -112,7 +169,9 @@ describe('Test /books endpoint methods', () => {
   });
 
   test('Get a book by id', async () => {
-    const response = await request.get('/api/v1/books/1');
+    const response = await request
+      .get('/api/v2/books/1')
+      .set('Authorization', 'bearer ' + token);
     expect(response.status).toEqual(200);
     expect(response.body.title).toEqual('Test Book');
     expect(response.body.author).toEqual('Test Author');
@@ -120,9 +179,12 @@ describe('Test /books endpoint methods', () => {
   });
 
   test('Update a book', async () => {
-    let response = await request.put('/api/v1/books/1').send({
-      title: 'Updated Test Book',
-    });
+    let response = await request
+      .put('/api/v2/books/1')
+      .set('Authorization', 'bearer ' + token)
+      .send({
+        title: 'Updated Test Book',
+      });
     expect(response.status).toEqual(200);
     expect(response.body.title).toEqual('Updated Test Book');
     expect(response.body.author).toEqual('Test Author');
@@ -130,8 +192,50 @@ describe('Test /books endpoint methods', () => {
   });
 
   test('Delete a book', async () => {
-    let response = await request.delete('/api/v1/books/1');
+    let response = await request
+      .delete('/api/v2/books/1')
+      .set('Authorization', 'bearer ' + token);
     expect(response.status).toEqual(200);
     expect(response.body.title).toBeUndefined();
+  });
+});
+
+describe('Test /books endpoint methods with invalid authorization', () => {
+  test('Handle getting all books', async () => {
+    const response = await request
+      .get('/api/v2/books')
+    expect(response.status).toEqual(401);
+  });
+
+  test('Create a book', async () => {
+    let response = await request
+      .post('/api/v2/books')
+      .send({
+        title: 'Test Book',
+        author: 'Test Author',
+        pages: 100,
+      });
+    expect(response.status).toEqual(401);
+  });
+
+  test('Get a book by id', async () => {
+    const response = await request
+      .get('/api/v2/books/1')
+    expect(response.status).toEqual(401);
+  });
+
+  test('Update a book', async () => {
+    let response = await request
+      .put('/api/v2/books/1')
+      .send({
+        title: 'Updated Test Book',
+      });
+    expect(response.status).toEqual(401);
+  });
+
+  test('Delete a book', async () => {
+    let response = await request
+      .delete('/api/v2/books/1')
+    expect(response.status).toEqual(401);
   });
 });

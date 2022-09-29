@@ -13,12 +13,12 @@ module.exports = async (req, res, next) => {
   try {
     req.user = await users.authenticateBasic(user, password);
     next();
-  } catch (e) {
-    _authError();
+  } catch (err) {
+    res.status(401).send('Invalid authentication request. ' + err.message);
   }
 
   function _authError() {
-    res.status(403).send('Invalid Login');
+    res.status(401).send('Invalid Credentials.');
   }
 
 };
